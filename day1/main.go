@@ -56,7 +56,7 @@ func main() {
 
 var (
 	// 数字だけを取り出す正規表現
-	re = regexp.MustCompile(`\d+`)
+	re = regexp.MustCompile(`\d`)
 )
 
 
