@@ -48,7 +48,7 @@ func main() {
 			if 0< len(nums) {
 				num, _ := strconv.Atoi(strings.Join(nums, ""))
 				sc.PartNumbers = append(sc.PartNumbers, PartNumber{
-					ID: fmt.Sprintf("%v_%v", idx, strings.Join(nums, "")),
+					ID: fmt.Sprintf("%v_%v_%v", sidx, idx, strings.Join(nums, "")),
 					Index: idxs,
 					Value: num,
 				})
@@ -82,6 +82,15 @@ func main() {
 			}
 		}
 	}
+
+	// for i := 0; i < len(ss); i++ {
+	// 	sc := ss[i]
+	// 	for _, item := range sc.PartNumbers {
+	// 		if _, ok := hitCache[item.ID]; !ok {
+	// 			fmt.Printf("%#v -- %#v\n", item.ID, item.Value)
+	// 		}
+	// 	}
+	// }
 
 	fmt.Printf("result ------> %#v\n", result)
 }
