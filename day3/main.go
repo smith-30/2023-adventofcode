@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"regexp"
 	"strconv"
 	"strings"
 )
@@ -26,6 +27,9 @@ func main() {
 	ss := map[int]Schematic{}
 	sidx := 0
 
+	allNum := 0
+	regNum := 0
+
 	// 行ごとにスキャン
 	for scanner.Scan() {
 		line := scanner.Text()
@@ -33,11 +37,30 @@ func main() {
 		sc := Schematic{}
 		idxs := make(map[int]struct{})
 		nums := []string{}
+
+		regNums := extractNumbers(line)
+		for _, item := range regNums {
+			regNum += item
+		}
+
+		_lineLen := len(_line)
 		for idx, item := range _line {
 			// 数字に変換できるとき
 			if _, err := strconv.Atoi(item); err == nil {
 				idxs[idx] = struct{}{}
 				nums = append(nums, item)
+				// 最後が数字だったときのケア
+				if _lineLen-1 == idx {
+					if 0 < len(nums) {
+						num, _ := strconv.Atoi(strings.Join(nums, ""))
+						sc.PartNumbers = append(sc.PartNumbers, PartNumber{
+							ID: fmt.Sprintf("%v_%v_%v", sidx+1, idx, strings.Join(nums, "")),
+							Index: idxs,
+							Value: num,
+						})
+						allNum += num
+					}
+				}
 				continue
 			}
 			switch item {
@@ -45,13 +68,14 @@ func main() {
 			default:
 				sc.Symbols = append(sc.Symbols, Symbol{Index: idx})
 			}
-			if 0< len(nums) {
+			if 0 < len(nums) {
 				num, _ := strconv.Atoi(strings.Join(nums, ""))
 				sc.PartNumbers = append(sc.PartNumbers, PartNumber{
-					ID: fmt.Sprintf("%v_%v_%v", sidx, idx, strings.Join(nums, "")),
+					ID: fmt.Sprintf("%v_%v_%v", sidx+1, idx, strings.Join(nums, "")),
 					Index: idxs,
 					Value: num,
 				})
+				allNum += num
 			}
 			nums = []string{}
 			idxs = make(map[int]struct{})
@@ -60,7 +84,6 @@ func main() {
 		sidx++
 	}
 
-	hitCache := map[string]struct{}{}
 	for i := 0; i < len(ss); i++ {
 		// Symbol の範囲にある PartNumber を取得
 		for _, symbol := range ss[i].Symbols {
@@ -70,12 +93,18 @@ func main() {
 					if _, ok := ss[x]; !ok {
 						continue
 					}
-					for _, n := range ss[x].PartNumbers {
+					for idx, n := range ss[x].PartNumbers {
 						if _, ok := n.Index[y]; ok {
-							if _, ok := hitCache[n.ID]; !ok {
-								result += n.Value
-								hitCache[n.ID] = struct{}{}
-							}
+							result += n.Value
+							firstPart := ss[x].PartNumbers[:idx]
+							secondPart := ss[x].PartNumbers[idx+1:]
+
+							// 前半と後半を結合して新しいスライスを作成
+							result := append(firstPart, secondPart...)
+
+							sc := ss[x]
+							sc.PartNumbers = result
+							ss[x] = sc
 						}
 					}
 				}
@@ -83,16 +112,22 @@ func main() {
 		}
 	}
 
-	// for i := 0; i < len(ss); i++ {
-	// 	sc := ss[i]
-	// 	for _, item := range sc.PartNumbers {
-	// 		if _, ok := hitCache[item.ID]; !ok {
-	// 			fmt.Printf("%#v -- %#v\n", item.ID, item.Value)
-	// 		}
-	// 	}
-	// }
+	unusedNum := 0
+	for i := 0; i < len(ss); i++ {
+		sc := ss[i]
+		for _, item := range sc.PartNumbers {
+			unusedNum += item.Value
+		}
+	}
 
-	fmt.Printf("result ------> %#v\n", result)
+	fmt.Printf("result    ------> %#v\n", result)
+	fmt.Printf("allNum    ------> %#v\n", allNum)
+	fmt.Printf("unusedNum ------> %#v\n", unusedNum)
+	fmt.Printf("resultCheck    ------> %#v\n", (result == (allNum-unusedNum)))
+
+	fmt.Printf("regNum    ------> %#v\n", regNum)
+
+	// すべての数値足したもの == result + 最後に残っている数値になるか
 }
 
 type Schematic struct {
@@ -122,4 +157,21 @@ func getAdjacentCoordinates(idx, v int) (re []map[int]int) {
 		}
 	}
 	return
+}
+
+func extractNumbers(input string) []int {
+	// 正規表現パターンで数値を抽出
+	re := regexp.MustCompile("\\d+")
+	matches := re.FindAllString(input, -1)
+
+	// 文字列を整数に変換
+	var numbers []int
+	for _, match := range matches {
+		number, err := strconv.Atoi(match)
+		if err == nil {
+			numbers = append(numbers, number)
+		}
+	}
+
+	return numbers
 }
