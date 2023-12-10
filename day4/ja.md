@@ -43,3 +43,41 @@ Card 6 has no winning numbers, so it is worth no points.
 
 
 --- Part Two ---
+
+エルフに調査結果を報告しようとしたそのとき、君たちの一人が、実はルールはずっとすべてのカードの裏に印刷されていたことに気づく。
+
+ポイントなんてものは存在しない。その代わり、スクラッチカードは当選番号の数だけ当たる。
+
+具体的には、当選したカードの下にあるスクラッチカードを、マッチした枚数分獲得します。
+つまり、仮にカード10に5つの数字がマッチした場合、あなたはカード11、12、13、14、15を1枚ずつ獲得することになります。
+
+コピーされたスクラッチカードは通常のスクラッチカードと同じように採点され、コピーされたカードと同じカード番号が付けられます。
+従って、もしあなたがカード10のコピーを獲得し、そのカードが5つの数字と一致した場合、
+元のカード10が獲得したのと同じカード、つまりカード11、12、13、14、15のコピーを獲得することになります。
+このプロセスは、どのコピーもこれ以上カードを獲得することができなくなるまで繰り返される。(カードは、テーブルの端から端までコピーさせることはない)。
+
+
+```
+- Card 1 has four matching numbers, so you win one copy each of the next four cards: cards 2, 3, 4, and 5.
+- Your original card 2 has two matching numbers, so you win one copy each of cards 3 and 4.
+- Your copy of card 2 also wins one copy each of cards 3 and 4.
+- Your four instances of card 3 (one original and three copies) have two matching numbers, so you win four copies each of cards 4 and 5.
+- Your eight instances of card 4 (one original and seven copies) have one matching number, so you win eight copies of card 5.
+- Your fourteen instances of card 5 (one original and thirteen copies) have no matching numbers and win no more cards.
+- Your one instance of card 6 (one original) has no matching numbers and wins no more cards.
+
+
+- カード 1 の数字が 4 つ一致しているので、次の 4 枚（カード 2、3、4、5）を 1 枚ずつ獲得する。
+- あなたの元のカード2は数字が2つ一致しているので、あなたはカード3と4を1枚ずつ獲得する。
+- あなたのカード2のコピーも、カード3と4をそれぞれ1枚ずつ獲得する。
+- あなたの4枚のカード3(オリジナル1枚とコピー3枚)は数字が2つずつ一致しているので、あなたはカード4と5を4枚ずつ獲得する。
+- あなたの8枚のカード4（オリジナル1枚とコピー7枚）は数字が1つずつ一致するので、あなたは8枚のカード5を獲得する。
+- あなたの14枚のカード5（オリジナル1枚とコピー13枚）には一致する数字がないので、あなたはもうカードを獲得しない。
+- あなたのカード6(オリジナル1枚)の1枚は数字が一 致せず、それ以上のカードは獲得できない。
+```
+
+すべてのオリジナルとコピーが処理されると、カード1が1枚、カード2が2枚、カード3が4枚、カード4が8枚、カード5が14枚、カード6が1枚となる。
+このスクラッチカードの山を合計すると、最終的に30枚のスクラッチカードを持つことになる！
+
+スクラッチカードが無くなるまで、元のスクラッチカードとコピーされたスクラッチカードを全て処理します。
+元のスクラッチカードを含めると、最終的に何枚のスクラッチカードがあるでしょうか？
