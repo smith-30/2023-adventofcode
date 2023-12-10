@@ -33,7 +33,6 @@ func main() {
 		// "|" を区切りにして左右の数字を取得
 		leftNumbers, rightNumbers, err := extractNumbersFromCard(line)
 		if err != nil {
-			fmt.Println("Error:", err)
 			return
 		}
 		for _, item := range rightNumbers {
@@ -53,8 +52,10 @@ func main() {
 }
 
 func extractNumbersFromCard(input string) (map[int]struct{}, []int, error) {
+	// Card: ** 部分を無視する
+	_parts := strings.Split(input, ":")
 	// "|" を区切りに文字列を分割
-	parts := strings.Split(input, "|")
+	parts := strings.Split(_parts[1], "|")
 	if len(parts) != 2 {
 		return nil, nil, fmt.Errorf("invalid input format")
 	}
